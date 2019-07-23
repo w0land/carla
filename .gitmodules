@@ -1,0 +1,9 @@
+[submodule "LibCarla/external/recastnavigation"]
+	path = LibCarla/external/recastnavigation
+	url = https://github.com/recastnavigation/recastnavigation.git
+[submodule "LibCarla/external/rpclib"]
+	path = LibCarla/external/rpclib
+	url = https://github.com/rpclib/rpclib.git
+[submodule "LibCarla/external/opendrive-test-files"]
+	path = LibCarla/external/opendrive-test-files
+	url = https://github.com/carla-simulator/opendrive-test-files.git

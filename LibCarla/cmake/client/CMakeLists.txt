@@ -197,6 +197,8 @@ if (LIBCARLA_BUILD_RELEASE)
   add_library(carla_client STATIC ${libcarla_sources})
 
   target_include_directories(carla_client SYSTEM PRIVATE
+      "${CMAKE_SOURCE_DIR}/external/rpclib/include"
+      "${CMAKE_SOURCE_DIR}/external/recastnavigation/"
       "${BOOST_INCLUDE_PATH}"
       "${RPCLIB_INCLUDE_PATH}"
       "${RECAST_INCLUDE_PATH}")
@@ -206,9 +208,12 @@ if (LIBCARLA_BUILD_RELEASE)
   if (WIN32) # @todo Fix PythonAPI build on Windows.
     set_target_properties(carla_client PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS_RELEASE}")
 
-    target_link_libraries(carla_client "${RECAST_LIB_PATH}/Recast.lib")
-    target_link_libraries(carla_client "${RECAST_LIB_PATH}/Detour.lib")
-    target_link_libraries(carla_client "${RECAST_LIB_PATH}/DetourCrowd.lib")
+    #target_link_libraries(carla_client "${RECAST_LIB_PATH}/Recast.lib")
+    target_link_libraries(carla_client Recast)
+    target_link_libraries(carla_client Detour)
+    target_link_libraries(carla_client DetourCrowd)
+    #target_link_libraries(carla_client "${RECAST_LIB_PATH}/Detour.lib")
+    #target_link_libraries(carla_client "${RECAST_LIB_PATH}/DetourCrowd.lib")
   else ()
     if (NOT DEFINED CMAKE_CXX_FLAGS_RELEASE_CLIENT)
       set(CMAKE_CXX_FLAGS_RELEASE_CLIENT ${CMAKE_CXX_FLAGS_RELEASE})
@@ -216,9 +221,10 @@ if (LIBCARLA_BUILD_RELEASE)
 
     set_target_properties(carla_client PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS_RELEASE_CLIENT}")
 
-    target_link_libraries(carla_client "${RECAST_LIB_PATH}/libRecast.a")
-    target_link_libraries(carla_client "${RECAST_LIB_PATH}/libDetour.a")
-    target_link_libraries(carla_client "${RECAST_LIB_PATH}/libDetourCrowd.a")
+    target_link_libraries(carla_client PUBLIC Recast)
+    target_link_libraries(carla_client PUBLIC Detour)
+    target_link_libraries(carla_client PUBLIC DetourCrowd)
+    target_link_libraries(carla_client PUBLIC rpc)
 
   endif (WIN32)
 
@@ -229,6 +235,8 @@ if (LIBCARLA_BUILD_DEBUG)
   add_library(carla_client_debug STATIC ${libcarla_sources})
 
   target_include_directories(carla_client_debug SYSTEM PRIVATE
+      "${CMAKE_SOURCE_DIR}/external/rpclib/include"
+      "${CMAKE_SOURCE_DIR}/external/recastnavigation/"
       "${BOOST_INCLUDE_PATH}"
       "${RPCLIB_INCLUDE_PATH}"
       "${RECAST_INCLUDE_PATH}")
@@ -238,9 +246,9 @@ if (LIBCARLA_BUILD_DEBUG)
   if (WIN32) # @todo Fix PythonAPI build on Windows.
     set_target_properties(carla_client_debug PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS_DEBUG}")
 
-    target_link_libraries(carla_client_debug "${RECAST_LIB_PATH}/Recast.lib")
-    target_link_libraries(carla_client_debug "${RECAST_LIB_PATH}/Detour.lib")
-    target_link_libraries(carla_client_debug "${RECAST_LIB_PATH}/DetourCrowd.lib")
+    target_link_libraries(carla_client_debug PUBLIC Recast)
+    target_link_libraries(carla_client_debug PUBLIC Detour)
+    target_link_libraries(carla_client_debug PUBLIC DetourCrowd)
   else ()
     if (NOT DEFINED CMAKE_CXX_FLAGS_DEBUG_CLIENT)
       set(CMAKE_CXX_FLAGS_DEBUG_CLIENT ${CMAKE_CXX_FLAGS_DEBUG})
@@ -248,9 +256,9 @@ if (LIBCARLA_BUILD_DEBUG)
 
     set_target_properties(carla_client_debug PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS_DEBUG_CLIENT}")
 
-    target_link_libraries(carla_client_debug "${RECAST_LIB_PATH}/libRecast.a")
-    target_link_libraries(carla_client_debug "${RECAST_LIB_PATH}/libDetour.a")
-    target_link_libraries(carla_client_debug "${RECAST_LIB_PATH}/libDetourCrowd.a")
+    target_link_libraries(carla_client_debug Recast)
+    target_link_libraries(carla_client_debug Detour)
+    target_link_libraries(carla_client_debug DetourCrowd)
 
   endif (WIN32)
 

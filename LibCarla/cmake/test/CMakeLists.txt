@@ -30,6 +30,7 @@ endif()
 if (LIBCARLA_BUILD_RELEASE)
   list(APPEND build_targets libcarla_test_${carla_config}_release)
 endif()
+find_package(Threads)
 
 # Create targets for debug and release in the same build type.
 foreach(target ${build_targets})
@@ -38,9 +39,12 @@ foreach(target ${build_targets})
 
   target_compile_definitions(${target} PUBLIC
       -DLIBCARLA_ENABLE_PROFILER
+      "-DLIBCARLA_TEST_CONTENT_FOLDER=\"${CMAKE_SOURCE_DIR}/external/opendrive-test-files\""
       -DLIBCARLA_WITH_GTEST)
 
   target_include_directories(${target} SYSTEM PRIVATE
+      "${CMAKE_SOURCE_DIR}/external/rpclib/include"
+      "${CMAKE_SOURCE_DIR}/external/recastnavigation/"
       "${BOOST_INCLUDE_PATH}"
       "${RPCLIB_INCLUDE_PATH}"
       "${GTEST_INCLUDE_PATH}")
@@ -53,30 +57,32 @@ foreach(target ${build_targets})
       target_link_libraries(${target} "gtest.lib")
       target_link_libraries(${target} "rpc.lib")
   else()
-      target_link_libraries(${target} "-lrpc")
-      target_link_libraries(${target} "-lgtest_main")
-      target_link_libraries(${target} "-lgtest")
+      target_link_libraries(${target} PRIVATE rpc ${CMAKE_THREAD_LIBS_INIT})
+      target_link_libraries(${target} PRIVATE "-lgtest_main")
+      target_link_libraries(${target} PRIVATE "-lgtest")
   endif()
 
   install(TARGETS ${target} DESTINATION test OPTIONAL)
 endforeach(target)
 
+find_package(Boost REQUIRED COMPONENTS filesystem system)
+
 if (LIBCARLA_BUILD_DEBUG)
   # Specific options for debug.
   set_target_properties(libcarla_test_${carla_config}_debug PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS_DEBUG}")
-  target_link_libraries(libcarla_test_${carla_config}_debug "carla_${carla_config}_debug")
+  target_link_libraries(libcarla_test_${carla_config}_debug PRIVATE "carla_${carla_config}_debug")
   target_compile_definitions(libcarla_test_${carla_config}_debug PUBLIC -DBOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
   if (CMAKE_BUILD_TYPE STREQUAL "Client")
-      target_link_libraries(libcarla_test_${carla_config}_debug "${BOOST_LIB_PATH}/libboost_filesystem.a")
+      target_link_libraries(libcarla_test_${carla_config}_debug PRIVATE Boost::filesystem)
   endif()
 endif()
 
 if (LIBCARLA_BUILD_RELEASE)
   # Specific options for release.
   set_target_properties(libcarla_test_${carla_config}_release PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS_RELEASE}")
-  target_link_libraries(libcarla_test_${carla_config}_release "carla_${carla_config}")
+  target_link_libraries(libcarla_test_${carla_config}_release PRIVATE "carla_${carla_config}")
   if (CMAKE_BUILD_TYPE STREQUAL "Client")
-      target_link_libraries(libcarla_test_${carla_config}_release "${BOOST_LIB_PATH}/libboost_filesystem.a")
+      target_link_libraries(libcarla_test_${carla_config}_release PRIVATE Boost::filesystem)
   endif()
 endif()
 
