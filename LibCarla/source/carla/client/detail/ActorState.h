@@ -71,11 +71,11 @@ namespace detail {
       return _episode;
     }
 
+    explicit ActorState(rpc::Actor description, EpisodeProxy episode);
   private:
 
     friend class Simulator;
 
-    explicit ActorState(rpc::Actor description, EpisodeProxy episode);
 
     rpc::Actor _description;
 

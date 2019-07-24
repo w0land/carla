@@ -55,12 +55,12 @@ TEST(streaming, low_level_sending_strings) {
 
   io_context_running io;
 
-  Server<tcp::Server> srv(io.service, TESTING_PORT);
+  low_level::Server<tcp::Server> srv(io.service, TESTING_PORT);
   srv.SetTimeout(1s);
 
   auto stream = srv.MakeStream();
 
-  Client<tcp::Client> c;
+  low_level::Client<tcp::Client> c;
   c.Subscribe(io.service, stream.token(), [&](auto message) {
     ++message_count;
     ASSERT_EQ(message.size(), message_text.size());
@@ -88,10 +88,10 @@ TEST(streaming, low_level_unsubscribing) {
 
   io_context_running io;
 
-  Server<tcp::Server> srv(io.service, TESTING_PORT);
+  low_level::Server<tcp::Server> srv(io.service, TESTING_PORT);
   srv.SetTimeout(1s);
 
-  Client<tcp::Client> c;
+  low_level::Client<tcp::Client> c;
   for (auto n = 0u; n < 10u; ++n) {
     auto stream = srv.MakeStream();
     std::atomic_size_t message_count{0u};
