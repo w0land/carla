@@ -1,8 +1,18 @@
 cmake_minimum_required(VERSION 3.5.1)
 project(libcarla-client)
 
+set(RECAST_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/external/recastnavigation/Recast/Include)
+set(DETOUR_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/external/recastnavigation/Detour/Include)
+set(DETOURCROWD_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/external/recastnavigation/DetourCrowd/Include)
+set(RECAST_LIB_PATH ${CMAKE_BINARY_DIR}/external/recastnavigation/Recast/)
+
+set(RPCLIB_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/external/rpclib/include)
+set(RPCLIB_LIB_PATH ${CMAKE_BINARY_DIR}/external/rpclib/include)
+
 # Install Recast&Detour libraries
-install(DIRECTORY "${RECAST_INCLUDE_PATH}/recast" DESTINATION include/system)
+install(DIRECTORY "${RECAST_INCLUDE_PATH}/" DESTINATION include/system/Recast/Include)
+install(DIRECTORY "${DETOUR_INCLUDE_PATH}/" DESTINATION include/system/Detour/Include)
+install(DIRECTORY "${DETOURCROWD_INCLUDE_PATH}/" DESTINATION include/system/DetourCrowd/Include)
 file(GLOB libcarla_carla_recastlib "${RECAST_LIB_PATH}/*.*")
 install(FILES ${libcarla_carla_recastlib} DESTINATION lib)
 
