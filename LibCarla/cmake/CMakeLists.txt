@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5.1)
 project(libcarla)
 
 option(LIBCARLA_BUILD_DEBUG "Build debug configuration" ON)
-option(LIBCARLA_BUILD_RELEASE "Build release configuration" OFF)
+option(LIBCARLA_BUILD_RELEASE "Build release configuration" ON)
 option(LIBCARLA_BUILD_TEST "Build unit tests" ON)
 
 message(STATUS "Build debug:   ${LIBCARLA_BUILD_DEBUG}")
