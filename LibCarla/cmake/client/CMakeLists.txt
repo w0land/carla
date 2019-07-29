@@ -1,36 +1,44 @@
 include(ExternalProject)
 
-ExternalProject_Get_Property(rpclib INSTALL_DIR)
-set(RPCLIB_INCLUDE_PATH ${INSTALL_DIR}/include)
+set(RPCLIB_INCLUDE_PATH ${CMAKE_BINARY_DIR}/rpclib/src/rpclib/include)
+set(RPCLIB_LIB_PATH ${CMAKE_BINARY_DIR}/rpclib/src/rpclib-build)
 add_library(rpclib_library STATIC IMPORTED GLOBAL)
-set_property(TARGET rpclib_library PROPERTY IMPORTED_LOCATION ${INSTALL_DIR}/lib/librpc.a)
+set_property(TARGET rpclib_library PROPERTY IMPORTED_LOCATION ${RPCLIB_LIB_PATH}/librpc.a)
 
-ExternalProject_Get_Property(recast INSTALL_DIR)
-set(RECAST_INCLUDE_PATH ${INSTALL_DIR}/include)
+set(RECAST_INCLUDE_PATH "${CMAKE_BINARY_DIR}/recastnavigation/src/recast/Recast/Include;${CMAKE_BINARY_DIR}/recastnavigation/src/recast/DetourCrowd/Include;${CMAKE_BINARY_DIR}/recastnavigation/src/recast/Detour/Include")
+set(RECAST_LIB_PATH ${CMAKE_BINARY_DIR}/recastnavigation/src/recast-build/Recast)
+set(DETOUR_LIB_PATH ${CMAKE_BINARY_DIR}/recastnavigation/src/recast-build/Detour)
+set(DETOURCROWD_LIB_PATH ${CMAKE_BINARY_DIR}/recastnavigation/src/recast-build/DetourCrowd)
 add_library(recast_library STATIC IMPORTED GLOBAL)
-set_property(TARGET recast_library PROPERTY IMPORTED_LOCATION ${INSTALL_DIR}/lib/libRecast.a)
+set_property(TARGET recast_library PROPERTY IMPORTED_LOCATION ${RECAST_LIB_PATH}/libRecast.a)
 add_library(detour_library STATIC IMPORTED GLOBAL)
-set_property(TARGET detour_library PROPERTY IMPORTED_LOCATION ${INSTALL_DIR}/lib/libDetour.a)
+set_property(TARGET detour_library PROPERTY IMPORTED_LOCATION ${DETOUR_LIB_PATH}/libDetour.a)
 add_library(detour_crowd_library STATIC IMPORTED GLOBAL)
-set_property(TARGET detour_crowd_library PROPERTY IMPORTED_LOCATION ${INSTALL_DIR}/lib/libDetourCrowd.a)
-
+set_property(TARGET detour_crowd_library PROPERTY IMPORTED_LOCATION ${DETOURCROWD_LIB_PATH}/libDetourCrowd.a)
 
 # Install Recast&Detour libraries
-install(DIRECTORY "${RECAST_INCLUDE_PATH}/recast" DESTINATION include/system)
-file(GLOB libcarla_carla_recastlib "${RECAST_LIB_PATH}/*.*")
-
+install(DIRECTORY "${CMAKE_BINARY_DIR}/recastnavigation/src/recast/Recast/Include/" DESTINATION include/system/recast/)
+install(DIRECTORY "${CMAKE_BINARY_DIR}/recastnavigation/src/recast/Detour/Include/" DESTINATION include/system/recast/)
+install(DIRECTORY "${CMAKE_BINARY_DIR}/recastnavigation/src/recast/DetourCrowd/Include/" DESTINATION include/system/recast/)
+set(libcarla_carla_recastlib "${RECAST_LIB_PATH}/libRecast.a")
 install(FILES ${libcarla_carla_recastlib} DESTINATION lib)
+
+set(libcarla_carla_detourlib "${DETOUR_LIB_PATH}/libDetour.a")
+install(FILES ${libcarla_carla_detourlib} DESTINATION lib)
+
+set(libcarla_carla_detourcrowdlib "${DETOURCROWD_LIB_PATH}/libDetourCrowd.a")
+install(FILES ${libcarla_carla_detourcrowdlib} DESTINATION lib)
 
 # Install rpclib (install in system folder to avoid extra warnings).
 install(DIRECTORY "${RPCLIB_INCLUDE_PATH}/rpc" DESTINATION include/system)
-file(GLOB libcarla_carla_rpclib "${RPCLIB_LIB_PATH}/*.*")
+set(libcarla_carla_rpclib "${RPCLIB_LIB_PATH}/librpc.a")
 install(FILES ${libcarla_carla_rpclib} DESTINATION lib)
 
 # Install boost headers (install in system folder to avoid extra warnings).
 # @todo Remove boost from public interface of LibCarla.client.
-install(DIRECTORY "${BOOST_INCLUDE_PATH}/boost" DESTINATION include/system)
-file(GLOB boost_libraries "${BOOST_LIB_PATH}/*.*")
-install(FILES ${boost_libraries} DESTINATION lib)
+#install(DIRECTORY "${BOOST_INCLUDE_PATH}/boost" DESTINATION include/system)
+#file(GLOB boost_libraries "${BOOST_LIB_PATH}/*.*")
+#install(FILES ${boost_libraries} DESTINATION lib)
 
 # Windows need libpng alongside with zlib to be installed
 if (WIN32)
